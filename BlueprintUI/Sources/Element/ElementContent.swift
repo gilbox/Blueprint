@@ -58,7 +58,8 @@ extension ElementContent {
     public init(measurable: Measurable) {
         self = ElementContent(
             layout: MeasurableLayout(measurable: measurable),
-            configure: { _ in })
+            configure: { _ in }
+        )
     }
 
     /// Initializes a new `ElementContent` with no children that delegates to the provided measure function.
@@ -69,6 +70,7 @@ extension ElementContent {
                 return _measure(constraint)
             }
         }
+        
         self = ElementContent(measurable: Measurer(_measure: measureFunction))
     }
 
@@ -82,7 +84,7 @@ extension ElementContent {
 
 extension ElementContent {
 
-    public struct ContentStorage<LayoutType: Layout> {
+    public struct ContentStorage<LayoutType: Layout> : Measurable {
 
         /// The layout object that is ultimately responsible for measuring
         /// and layout tasks.
@@ -107,16 +109,16 @@ extension ElementContent {
             children.append(child)
         }
         
-        fileprivate struct Child : Measurable {
+        fileprivate struct Child {
 
             var element: Element
             var content: ElementContent
             var traits: LayoutType.Traits
             var key: AnyHashable?
-
-            func measure(in constraint: SizeConstraint) -> CGSize {
-                content.measure(in: constraint)
-            }
+        }
+        
+        public func measure(in constraint: SizeConstraint) -> CGSize {
+            return layout.measure(in: constraint, items: layoutItems)
         }
     }
     
@@ -137,10 +139,6 @@ extension ElementContent.ContentStorage : AnyContentStorage {
 
     var childCount: Int {
         return children.count
-    }
-
-    public func measure(in constraint: SizeConstraint) -> CGSize {
-        return layout.measure(in: constraint, items: layoutItems)
     }
 
     func performLayout(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)] {
@@ -174,7 +172,7 @@ extension ElementContent.ContentStorage : AnyContentStorage {
     }
 
     private var layoutItems: [(LayoutType.Traits, Measurable)] {
-        return children.map { ($0.traits, $0) }
+        return children.map { ($0.traits, $0.content) }
     }
 }
 
