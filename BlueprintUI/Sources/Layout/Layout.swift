@@ -5,6 +5,9 @@ public protocol Layout {
     
     /// Per-item metadata that is used during the measuring and layout pass.
     associatedtype Traits = ()
+    
+    /// Returns a default traits object.
+    static var defaultTraits: Self.Traits { get }
 
     /// Computes the size that this layout requires in a layout, given an array
     /// of chidren and accompanying layout traits.
@@ -28,9 +31,12 @@ public protocol Layout {
     /// - returns: Layout attributes for the given array of items.
     func layout(size: CGSize, items: [(traits: Self.Traits, content: Measurable)]) -> [LayoutAttributes]
     
-    /// Returns a default traits object.
-    static var defaultTraits: Self.Traits { get }
-    
+    func layout2(with size: CGSize, items: [LayoutItem<Self>]) -> LayoutResult
+}
+
+public struct LayoutItem<LayoutType:Layout> {
+    var traits : LayoutType.Traits
+    var item : Measurable
 }
 
 extension Layout where Traits == () {

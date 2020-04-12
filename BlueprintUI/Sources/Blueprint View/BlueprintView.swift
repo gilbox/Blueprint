@@ -74,14 +74,13 @@ public final class BlueprintView: UIView {
 
     /// Forwarded to the `measure(in:)` implementation of the root element.
     override public func sizeThatFits(_ size: CGSize) -> CGSize {
-        guard let element = element else { return .zero }
-        let constraint: SizeConstraint
-        if size == .zero {
-            constraint = SizeConstraint(width: .unconstrained, height: .unconstrained)
-        } else {
-            constraint = SizeConstraint(size)
+        guard let element = element else {
+            return .zero
         }
-        return element.content.measure(in: constraint)
+        
+        let result = element.content.layout(in: size == .zero ? .unconstrained : .init(size))
+        
+        return result.size
     }
     
     override public func layoutSubviews() {

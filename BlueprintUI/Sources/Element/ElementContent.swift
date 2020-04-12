@@ -26,7 +26,12 @@ public struct ElementContent: Measurable {
     func performLayout(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)] {
         return storage.performLayout(attributes: attributes)
     }
+    
+    func layout(in size : SizeConstraint) -> LayoutResult {
+        
+    }
 }
+
 
 extension ElementContent {
 
@@ -114,12 +119,19 @@ extension ElementContent {
             }
         }
     }
+    
+    public struct ChildLayoutResult {
+        var identifier : ElementIdentifier
+        var node : LayoutResultNode
+    }
 }
 
 
 fileprivate protocol AnyContentStorage : Measurable {
     var childCount: Int { get }
     func performLayout(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)]
+    
+    func layout2(in size : SizeConstraint) -> [ElementContent.ChildLayoutResult]
 }
 
 
@@ -162,9 +174,40 @@ extension ElementContent.ContentStorage : AnyContentStorage {
 
         return result
     }
+    
+    func layout2(in size : SizeConstraint) -> [ElementContent.ChildLayoutResult] {
+        
+        let childAttributes = self.layout.layout2(
+            with: size.maximum,
+            items: self.layoutItems2
+        )
+        
+        var identifierFactory = ElementIdentifier.Factory(elementCount: children.count)
+        
+        return self.children.mapWithIndex { index, _, child in
+            let childLayoutAttributes = childAttributes.children[index]
+
+            let resultNode = LayoutResultNode(
+                element: child.element,
+                layoutAttributes: childLayoutAttributes,
+                content: child.content
+            )
+            
+            let identifier = identifierFactory.nextIdentifier(
+                for: type(of: child.element),
+                key: child.key
+            )
+
+            return .init(identifier: identifier, node: resultNode)
+        }
+    }
 
     private var layoutItems: [(LayoutType.Traits, Measurable)] {
         return children.map { ($0.traits, $0) }
+    }
+    
+    private var layoutItems2 : [LayoutItem<LayoutType>] {
+        return children.map { LayoutItem(traits: $0.traits, item: $0) }
     }
 }
 
@@ -189,6 +232,10 @@ fileprivate struct SingleChildLayoutHost: Layout {
         return [
             wrapped.layout(size: size, child: items.map { $0.content }.first!)
         ]
+    }
+    
+    func layout2(with size: CGSize, items: [LayoutItem<SingleChildLayoutHost>]) -> LayoutResult {
+        // TODO
     }
 }
 
@@ -220,4 +267,25 @@ fileprivate struct MeasurableLayout: Layout {
         return []
     }
 
+}
+
+
+fileprivate extension Array {
+    
+    func mapWithIndex<Mapped>(_ block : (Int, Bool, Element) -> Mapped) -> [Mapped]
+    {
+        var mapped = [Mapped]()
+        mapped.reserveCapacity(self.count)
+        
+        let count = self.count
+        var index : Int = 0
+        
+        while index < count {
+            let element = self[index]
+            mapped.append(block(index, index == (count - 1), element))
+            index += 1
+        }
+        
+        return mapped
+    }
 }
