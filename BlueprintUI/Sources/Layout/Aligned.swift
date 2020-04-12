@@ -110,5 +110,16 @@ public struct Aligned: Element {
 
             return attributes
         }
+        
+        func layout2(in constraint: SizeConstraint, child: Measurable) -> LayoutResult {
+            let size = child.measure(in: constraint)
+            
+            return LayoutResult(
+                size: size,
+                layoutAttributes: [
+                    self.layout(size: size, child: child)
+                ]
+            )
+        }
     }
 }

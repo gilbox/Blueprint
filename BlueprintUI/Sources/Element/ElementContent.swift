@@ -197,21 +197,13 @@ fileprivate struct SingleChildLayoutHost: Layout {
     func layout(size: CGSize, items: [(traits: (), content: Measurable)]) -> [LayoutAttributes] {
         precondition(items.count == 1)
         return [
-            wrapped.layout(size: size, child: items.map { $0.content }.first!)
+            wrapped.layout(size: size, child: items[0].content)
         ]
     }
     
     func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
         precondition(items.count == 1)
-        
-        // TODO: SingleChildLayout needs new layout method as well.
-        
-        return LayoutResult(
-            size: constraint.maximum,
-            layoutAttributes: [
-                wrapped.layout(size: constraint.maximum, child: items.map { $0.content }.first!)
-            ]
-        )
+        return wrapped.layout2(in: constraint, child: items[0].content)
     }
 }
 
@@ -225,7 +217,15 @@ fileprivate struct PassthroughLayout: SingleChildLayout {
     func layout(size: CGSize, child: Measurable) -> LayoutAttributes {
         return LayoutAttributes(size: size)
     }
-
+    
+    func layout2(in constraint : SizeConstraint, child : Measurable) -> LayoutResult {
+        let size = child.measure(in: constraint)
+        
+        return LayoutResult(
+            size: size,
+            layoutAttributes: [LayoutAttributes(size: size)]
+        )
+    }
 }
 
 // Used for empty elements with an intrinsic size

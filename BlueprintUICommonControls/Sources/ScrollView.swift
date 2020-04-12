@@ -133,7 +133,17 @@ extension ScrollView {
             }
             return contentAttributes
         }
-
+        
+        func layout2(in constraint: SizeConstraint, child: Measurable) -> LayoutResult {
+            let size = self.measure(in: constraint, child: child)
+            
+            return LayoutResult(
+                size: size,
+                layoutAttributes: [
+                    self.layout(size: size, child: child)
+                ]
+            )
+        }
     }
 
 }

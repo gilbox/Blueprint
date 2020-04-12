@@ -19,4 +19,7 @@ public protocol SingleChildLayout {
     ///
     /// - returns: Layout attributes for the child of this layout.
     func layout(size: CGSize, child: Measurable) -> LayoutAttributes
+    
+    /// TODO
+    func layout2(in constraint : SizeConstraint, child : Measurable) -> LayoutResult
 }
