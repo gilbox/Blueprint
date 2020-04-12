@@ -176,10 +176,6 @@ extension ElementContent.ContentStorage : AnyContentStorage {
     private var layoutItems: [(LayoutType.Traits, Measurable)] {
         return children.map { ($0.traits, $0) }
     }
-    
-    private var layoutItems2 : [LayoutItem<LayoutType>] {
-        return children.map { LayoutItem(traits: $0.traits, item: $0) }
-    }
 }
 
 
@@ -203,6 +199,19 @@ fileprivate struct SingleChildLayoutHost: Layout {
         return [
             wrapped.layout(size: size, child: items.map { $0.content }.first!)
         ]
+    }
+    
+    func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
+        precondition(items.count == 1)
+        
+        // TODO: SingleChildLayout needs new layout method as well.
+        
+        return LayoutResult(
+            size: constraint.maximum,
+            layoutAttributes: [
+                wrapped.layout(size: constraint.maximum, child: items.map { $0.content }.first!)
+            ]
+        )
     }
 }
 
@@ -233,5 +242,13 @@ fileprivate struct MeasurableLayout: Layout {
         precondition(items.isEmpty)
         return []
     }
+    
+    public func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
+        precondition(items.isEmpty)
 
+        return LayoutResult(
+            size: measurable.measure(in: constraint),
+            layoutAttributes: []
+        )
+    }
 }

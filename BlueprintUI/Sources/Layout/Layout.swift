@@ -30,12 +30,25 @@ public protocol Layout {
     ///
     /// - returns: Layout attributes for the given array of items.
     func layout(size: CGSize, items: [(traits: Self.Traits, content: Measurable)]) -> [LayoutAttributes]
+    
+    /// TODO
+    func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult
 }
 
-public struct LayoutItem<LayoutType:Layout> {
-    var traits : LayoutType.Traits
-    var item : Measurable
+
+public struct LayoutResult {
+    var size : CGSize
+    var layoutAttributes : [LayoutAttributes]
 }
+
+
+public struct LayoutItem<LayoutType:Layout> {
+    public var element: Element
+    public var content: ElementContent
+    public var traits: LayoutType.Traits
+    public var key: AnyHashable?
+}
+
 
 extension Layout where Traits == () {
     

@@ -46,4 +46,14 @@ fileprivate struct OverlayLayout: Layout {
             repeating: LayoutAttributes(size: size),
             count: items.count)
     }
+    
+    func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
+        LayoutResult(
+            size: constraint.maximum,
+            layoutAttributes: Array(
+                repeating: LayoutAttributes(size: constraint.maximum),
+                count: items.count
+            )
+        )
+    }
 }

@@ -130,6 +130,18 @@ public struct StackLayout: Layout {
     public func layout(size: CGSize, items: [(traits: Traits, content: Measurable)]) -> [LayoutAttributes] {
         return _layout(size: size, items: items)
     }
+    
+    public func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
+        
+        let legacyItems = items.map {
+            (traits:$0.traits, content: $0.content)
+        }
+        
+        return LayoutResult(
+            size: _measureIn(constraint: constraint, items: legacyItems),
+            layoutAttributes: _layout(size: constraint.maximum, items: legacyItems)
+        )
+    }
 }
 
 extension StackLayout {

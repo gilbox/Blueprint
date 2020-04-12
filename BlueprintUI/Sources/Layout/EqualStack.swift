@@ -65,7 +65,12 @@ extension EqualStack {
         var spacing: CGFloat
 
         func measure(in constraint: SizeConstraint, items: [(traits: Void, content: Measurable)]) -> CGSize {
-            let itemSizes = items.map { $1.measure(in: constraint) }
+            self.measure(in: constraint, items: items.map { $1 })
+        }
+        
+        private func measure(in constraint : SizeConstraint, items : [Measurable]) -> CGSize {
+            
+            let itemSizes = items.map { $0.measure(in: constraint) }
 
             let maximumItemWidth = itemSizes.map { $0.width }.max() ?? 0
             let maximumItemHeight = itemSizes.map { $0.height }.max() ?? 0
@@ -86,6 +91,10 @@ extension EqualStack {
         }
 
         func layout(size: CGSize, items: [(traits: (), content: Measurable)]) -> [LayoutAttributes] {
+            self.layout(size: size, items: items.map { $1 })
+        }
+        
+        private func layout(size: CGSize, items: [Measurable]) -> [LayoutAttributes] {
             guard items.count > 0 else { return [] }
 
             let itemSize: CGSize
@@ -117,7 +126,18 @@ extension EqualStack {
 
             return result
         }
-
+        
+        public func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
+            
+            let legacyItems = items.map { $0.content }
+            
+            let size = self.measure(in: constraint, items: legacyItems)
+            
+            return LayoutResult(
+                size: size,
+                layoutAttributes: self.layout(size: constraint.maximum, items: legacyItems)
+            )
+        }
     }
 
 }

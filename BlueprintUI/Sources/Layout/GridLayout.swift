@@ -87,4 +87,17 @@ public struct GridLayout: Layout {
         return result
     }
     
+    public func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
+        
+        let legacyItems = items.map {
+            (traits : $0.traits, content : $0.content)
+        }
+        
+        let size = self.measure(in: constraint, items: legacyItems)
+        
+        return LayoutResult(
+            size: size,
+            layoutAttributes: self.layout(size: constraint.maximum, items: legacyItems)
+        )
+    }
 }
