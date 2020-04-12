@@ -130,7 +130,6 @@ public struct StackLayout: Layout {
     public func layout(size: CGSize, items: [(traits: Traits, content: Measurable)]) -> [LayoutAttributes] {
         return _layout(size: size, items: items)
     }
-
 }
 
 extension StackLayout {

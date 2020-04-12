@@ -30,8 +30,6 @@ public protocol Layout {
     ///
     /// - returns: Layout attributes for the given array of items.
     func layout(size: CGSize, items: [(traits: Self.Traits, content: Measurable)]) -> [LayoutAttributes]
-    
-    func layout2(with size: CGSize, items: [LayoutItem<Self>]) -> LayoutResult
 }
 
 public struct LayoutItem<LayoutType:Layout> {

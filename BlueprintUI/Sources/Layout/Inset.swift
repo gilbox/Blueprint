@@ -76,7 +76,7 @@ public struct Inset: Element {
 extension Inset {
 
     fileprivate struct Layout: SingleChildLayout {
-
+        
         var top: CGFloat
         var bottom: CGFloat
         var left: CGFloat

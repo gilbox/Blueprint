@@ -60,7 +60,7 @@ extension EqualStack {
 extension EqualStack {
 
     fileprivate struct EqualLayout: Layout {
-
+        
         var direction: Direction
         var spacing: CGFloat
 

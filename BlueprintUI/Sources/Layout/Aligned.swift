@@ -67,6 +67,7 @@ public struct Aligned: Element {
     }
 
     private struct Layout: SingleChildLayout {
+        
         var verticalAlignment: VerticalAlignment
         var horizontalAlignment: HorizontalAlignment
 

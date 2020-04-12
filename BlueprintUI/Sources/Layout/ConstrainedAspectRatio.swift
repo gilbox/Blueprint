@@ -64,6 +64,7 @@ public struct ConstrainedAspectRatio: Element {
     }
 
     private struct Layout: SingleChildLayout {
+        
         var aspectRatio: AspectRatio
         var contentMode: ContentMode
 

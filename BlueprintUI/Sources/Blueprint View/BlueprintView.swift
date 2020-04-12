@@ -54,7 +54,9 @@ public final class BlueprintView: UIView {
             node: NativeViewNode(
                 content: UIView.describe() { _ in },
                 layoutAttributes: LayoutAttributes(),
-                children: []))
+                children: []
+            )
+        )
     
         super.init(frame: CGRect.zero)
         

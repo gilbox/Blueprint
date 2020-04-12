@@ -62,7 +62,7 @@ extension Comparable {
 extension ConstrainedSize {
 
     fileprivate struct Layout: SingleChildLayout {
-
+        
         var width: Constraint
         var height: Constraint
 
@@ -76,7 +76,8 @@ extension ConstrainedSize {
         func layout(size: CGSize, child: Measurable) -> LayoutAttributes {
             return LayoutAttributes(size: size)
         }
-
+        
+      
     }
 
 }

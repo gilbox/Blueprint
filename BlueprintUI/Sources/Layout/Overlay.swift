@@ -46,5 +46,4 @@ fileprivate struct OverlayLayout: Layout {
             repeating: LayoutAttributes(size: size),
             count: items.count)
     }
-
 }
