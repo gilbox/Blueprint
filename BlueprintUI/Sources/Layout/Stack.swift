@@ -121,25 +121,15 @@ public struct StackLayout: Layout {
     public init(axis: Axis) {
         self.axis = axis
     }
-
-    public func measure(in constraint: SizeConstraint, items: [(traits: Traits, content: Measurable)]) -> CGSize {
-        let size = _measureIn(constraint: constraint, items: items)
-        return size
-    }
-
-    public func layout(size: CGSize, items: [(traits: Traits, content: Measurable)]) -> [LayoutAttributes] {
-        return _layout(size: size, items: items)
-    }
     
     public func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
-        
-        let legacyItems = items.map {
-            (traits:$0.traits, content: $0.content)
-        }
-        
-        return LayoutResult(
-            size: _measureIn(constraint: constraint, items: legacyItems),
-            layoutAttributes: _layout(size: constraint.maximum, items: legacyItems)
+        LayoutResult(
+            size: {
+                _measureIn(constraint: constraint, items: items)
+            },
+            layoutAttributes: {size in
+                _layout(size: size, items: items)
+            }
         )
     }
 }
@@ -196,57 +186,59 @@ extension StackLayout {
 
 // MARK: - Layout logic
 
-// Stack layout is generalized to work for both Rows and Columns.
-// 
-// Some special terminology is used to symbolically represent the two axes of a stack:
-//
-//   - The axis along which elements are being laid out is generally called "axis".
-//   - The other axis is the cross axis, or just "cross".
-// 
-// For Rows, the axis is horizontal and the cross is vertical.
-// For Columns, the axis is vertical and the cross is horizontal.
-//
-// Row──────────────────────────────────┐
-// │┌───────┐                      ▲    │
-// ││       │┌───────┐         ┌───┼───┐│
-// ││       ││       │         │   │   ││
-// ││       ││       │┌───────┐│ Cross ││
-// ││       ││       ││       ││   │   ││
-// │◀───────┼┼─────Axis───────┼┼───┼───▶│
-// ││       ││       ││       ││   │   ││
-// ││       ││       │└───────┘│   │   ││
-// ││       ││       │         │   │   ││
-// ││       │└───────┘         └───┼───┘│
-// │└───────┘                      ▼    │
-// └────────────────────────────────────┘
-//
-//      Column────────────────────┐
-//      │┌───────────▲───────────┐│
-//      ││           │           ││
-//      ││         Axis          ││
-//      ││           │           ││
-//      │└───────────┼───────────┘│
-//      │   ┌────────┼────────┐   │
-//      │   │        │        │   │
-//      │◀──┼────────┼─Cross──┼──▶│
-//      │   │        │        │   │
-//      │   └────────┼────────┘   │
-//      │       ┌────┼────┐       │
-//      │       │    │    │       │
-//      │       │    │    │       │
-//      │       │    │    │       │
-//      │       └────┼────┘       │
-//      │   ┌────────┼────────┐   │
-//      │   │        │        │   │
-//      │   │        │        │   │
-//      │   │        │        │   │
-//      │   └────────▼────────┘   │
-//      └─────────────────────────┘
-//
+/// Stack layout is generalized to work for both Rows and Columns.
+///
+/// Some special terminology is used to symbolically represent the two axes of a stack:
+///
+///   - The axis along which elements are being laid out is generally called "axis".
+///   - The other axis is the cross axis, or just "cross".
+///
+/// For Rows, the axis is horizontal and the cross is vertical.
+/// For Columns, the axis is vertical and the cross is horizontal.
+///
+///```
+/// Row──────────────────────────────────┐
+/// │┌───────┐                      ▲    │
+/// ││       │┌───────┐         ┌───┼───┐│
+/// ││       ││       │         │   │   ││
+/// ││       ││       │┌───────┐│ Cross ││
+/// ││       ││       ││       ││   │   ││
+/// │◀───────┼┼─────Axis───────┼┼───┼───▶│
+/// ││       ││       ││       ││   │   ││
+/// ││       ││       │└───────┘│   │   ││
+/// ││       ││       │         │   │   ││
+/// ││       │└───────┘         └───┼───┘│
+/// │└───────┘                      ▼    │
+/// └────────────────────────────────────┘
+///
+///      Column────────────────────┐
+///      │┌───────────▲───────────┐│
+///      ││           │           ││
+///      ││         Axis          ││
+///      ││           │           ││
+///      │└───────────┼───────────┘│
+///      │   ┌────────┼────────┐   │
+///      │   │        │        │   │
+///      │◀──┼────────┼─Cross──┼──▶│
+///      │   │        │        │   │
+///      │   └────────┼────────┘   │
+///      │       ┌────┼────┐       │
+///      │       │    │    │       │
+///      │       │    │    │       │
+///      │       │    │    │       │
+///      │       └────┼────┘       │
+///      │   ┌────────┼────────┐   │
+///      │   │        │        │   │
+///      │   │        │        │   │
+///      │   │        │        │   │
+///      │   └────────▼────────┘   │
+///      └─────────────────────────┘
+/// ```
+///
 extension StackLayout {
 
-    private func _layout(size: CGSize, items: [(traits: Traits, content: Measurable)]) -> [LayoutAttributes] {
-        guard items.count > 0 else { return [] }
+    private func _layout(size: CGSize, items: [LayoutItem<Self>]) -> LayoutResult {
+        guard items.count > 0 else { return .empty }
 
         // During layout the constraints are always `.exactly` to fit the provided size
         let vectorConstraint = size.vectorConstraint(axis: axis)
@@ -276,7 +268,7 @@ extension StackLayout {
     }
 
     private func _frames(
-        for items: [(traits: Traits, content: Measurable)],
+        for items: [LayoutItem<Self>],
         in vectorConstraint: VectorConstraint
     ) -> [VectorFrame] {
         // First allocate available space along the layout axis.
@@ -297,6 +289,7 @@ extension StackLayout {
     ///
     /// The axis segments of a Row look like this diagram.
     ///
+    ///```
     /// Row───────────────────────────────────────────┐
     /// │┌───────────┐                                │
     /// ││           │                   ┌───────────┐│
@@ -310,13 +303,14 @@ extension StackLayout {
     /// ││           │                   └───────────┘│
     /// │└───────────┘                                │
     /// └─────────────────────────────────────────────┘
+    ///```
     ///
     /// - Parameters:
     ///   - for: The items to measure.
     ///   - in: The contraint for all measurements.
     /// - Returns: The axis measurements as segments.
     private func _axisSegments(
-        for items: [(traits: Traits, content: Measurable)],
+        for items: [LayoutItem<Self>],
         in vectorConstraint: VectorConstraint
     ) -> [Segment] {
         let constraint = vectorConstraint.constraint(axis: axis)
@@ -547,7 +541,7 @@ extension StackLayout {
     ///   - crossConstraint: The cross component of the contraint for all measurements.
     /// - Returns: The cross measurements as segments.
     private func _crossSegments(
-        for items: [Measurable],
+        for items: [LayoutItem<Self>],
         axisConstraints: [CGFloat],
         crossConstraint: VectorConstraint.Axis
     ) -> [Segment] {

@@ -150,12 +150,12 @@ extension ElementContent {
 
         func layoutElementTree(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)] {
 
-            let childAttributes = layout.layout(size: attributes.bounds.size, items: layoutItems)
+            let childAttributes = layout.layout2(in: SizeConstraint(attributes.bounds.size), items: self.layoutItems)
             
             var identifierFactory = ElementIdentifier.Factory(elementCount: children.count)
             
             return self.children.mapWithIndex { index, _, child in
-                let childLayoutAttributes = childAttributes[index]
+                let childLayoutAttributes = childAttributes.layoutAttributes[index]
 
                 let resultNode = LayoutResultNode(
                     element: child.element,
@@ -172,8 +172,15 @@ extension ElementContent {
             }
         }
 
-        private var layoutItems: [(LayoutType.Traits, Measurable)] {
-            return children.map { ($0.traits, $0.content) }
+        private var layoutItems: [LayoutItem<LayoutType>] {
+            children.map {
+                LayoutItem(
+                    element: $0.element,
+                    content: $0.content,
+                    traits: $0.traits,
+                    key: $0.key
+                )
+            }
         }
     }
     
@@ -192,21 +199,6 @@ fileprivate struct SingleChildLayoutHost: Layout {
 
     init(wrapping layout: SingleChildLayout) {
         self.wrapped = layout
-    }
-
-    func measure(in constraint: SizeConstraint, items: [(traits: (), content: Measurable)]) -> CGSize {
-        precondition(items.count == 1)
-        return wrapped.measure(in: constraint, child: items.map { $0.content }.first!)
-    }
-
-    func layout(size: CGSize, items: [(traits: (), content: Measurable)]) -> [LayoutAttributes] {
-        precondition(items.count == 1)
-        
-        let item = items[0]
-        
-        return [
-            wrapped.layout(size: size, child: item.content)
-        ]
     }
     
     func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {

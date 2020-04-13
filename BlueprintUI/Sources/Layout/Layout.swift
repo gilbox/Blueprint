@@ -61,6 +61,13 @@ public struct LayoutResult {
     public var size : CGSize
     public var layoutAttributes : [LayoutAttributes]
     
+    public static var empty : Self {
+        LayoutResult(
+            size: .zero,
+            layoutAttributes: []
+        )
+    }
+    
     public init(
         size : CGSize,
         layoutAttributes : [LayoutAttributes]
