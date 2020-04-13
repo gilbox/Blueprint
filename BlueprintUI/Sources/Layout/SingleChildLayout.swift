@@ -4,7 +4,7 @@ import UIKit
 public protocol SingleChildLayout {
     
     /// TODO
-    func layout2(in constraint : SizeConstraint, child : MeasurableChild) -> SingleChildLayoutResult
+    func layout(in constraint : SizeConstraint, child : MeasurableChild) -> SingleChildLayoutResult
 }
 
 

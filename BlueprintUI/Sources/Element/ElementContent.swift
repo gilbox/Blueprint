@@ -23,12 +23,12 @@ public struct ElementContent {
         storage.layoutElementTree(attributes: attributes)
     }
     
-    func layout2(in constraint : SizeConstraint) -> LayoutResult {
-        storage.layout2(in: constraint)
+    func layout(in constraint : SizeConstraint) -> LayoutResult {
+        storage.layout(in: constraint)
     }
     
-    func measure2(in constraint : SizeConstraint) -> CGSize {
-        layout2(in: constraint).size
+    func measure(in constraint : SizeConstraint) -> CGSize {
+        layout(in: constraint).size
     }
 }
 
@@ -71,7 +71,7 @@ extension ElementContent {
 
 fileprivate protocol AnyContentStorage {
     var childCount: Int { get }
-    func layout2(in constraint : SizeConstraint) -> LayoutResult
+    func layout(in constraint : SizeConstraint) -> LayoutResult
     func layoutElementTree(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)]
 }
 
@@ -116,8 +116,8 @@ extension ElementContent {
             public var key: AnyHashable?
         }
         
-        public func measure2(in constraint: SizeConstraint) -> CGSize {
-            return layout2(in: constraint).size
+        public func measure(in constraint: SizeConstraint) -> CGSize {
+            return layout(in: constraint).size
         }
         
         // MARK: AnyContentStorage
@@ -126,15 +126,15 @@ extension ElementContent {
             return children.count
         }
         
-        func layout2(in constraint : SizeConstraint) -> LayoutResult {
-            self.layout.layout2(in: constraint, items: self.children.map {
+        func layout(in constraint : SizeConstraint) -> LayoutResult {
+            self.layout.layout(in: constraint, items: self.children.map {
                 LayoutItem(element: $0.element, content: $0.content, traits: $0.traits, key: $0.key)
             })
         }
 
         func layoutElementTree(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)] {
 
-            let childAttributes = layout.layout2(in: SizeConstraint(attributes.bounds.size), items: self.layoutItems)
+            let childAttributes = layout.layout(in: SizeConstraint(attributes.bounds.size), items: self.layoutItems)
             
             var identifierFactory = ElementIdentifier.Factory(elementCount: children.count)
             
@@ -185,15 +185,15 @@ fileprivate struct SingleChildLayoutHost: Layout {
         self.wrapped = layout
     }
     
-    func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
+    func layout(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
         precondition(items.count == 1)
         
         let item = items[0]
                 
-        let result = wrapped.layout2(
+        let result = wrapped.layout(
             in: constraint,
             child: MeasurableChild {
-                item.content.measure2(in: $0)
+                item.content.measure(in: $0)
             }
         )
                 
@@ -207,7 +207,7 @@ fileprivate struct SingleChildLayoutHost: Layout {
 // Used for elements with a single child that requires no custom layout
 fileprivate struct PassthroughLayout: SingleChildLayout {
     
-    func layout2(in constraint : SizeConstraint, child : MeasurableChild) -> SingleChildLayoutResult {
+    func layout(in constraint : SizeConstraint, child : MeasurableChild) -> SingleChildLayoutResult {
         SingleChildLayoutResult(
             size: { child.size(in: constraint) },
             layoutAttributes: { LayoutAttributes(size: $0) }
@@ -221,7 +221,7 @@ fileprivate struct IntrinsicSizeLayout: Layout {
     // TODO: This, or a layout?
     var measure : (SizeConstraint) -> CGSize
     
-    public func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
+    public func layout(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
         precondition(items.isEmpty)
 
         return LayoutResult(

@@ -55,7 +55,8 @@ fileprivate struct MainView: ProxyElement {
 
         let background = Box(
             backgroundColor: UIColor(white: 0.95, alpha: 1.0),
-            wrapping: scroll)
+            wrapping: scroll
+        )
 
         return background
     }

@@ -24,7 +24,7 @@ public struct GridLayout: Layout {
     
     public var margin: CGFloat = 0.0
     
-    public func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
+    public func layout(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
         LayoutResult(
             size: {
                 let primarySize = direction.primaryDimensionSize

@@ -64,11 +64,11 @@ extension EqualStack {
         var direction: Direction
         var spacing: CGFloat
 
-        public func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
+        public func layout(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
                         
             LayoutResult(
                 size: {
-                    let itemSizes = items.map { $0.content.measure2(in: constraint) }
+                    let itemSizes = items.map { $0.content.measure(in: constraint) }
 
                     let maximumItemWidth = itemSizes.map { $0.width }.max() ?? 0
                     let maximumItemHeight = itemSizes.map { $0.height }.max() ?? 0

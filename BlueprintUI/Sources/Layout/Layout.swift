@@ -2,7 +2,7 @@ import UIKit
 
 
 /// Conforming types can calculate layout attributes for an array of children.
-public protocol Layout : AnyLayout {
+public protocol Layout {
     
     /// Per-item metadata that is used during the measuring and layout pass.
     associatedtype Traits = ()
@@ -11,19 +11,7 @@ public protocol Layout : AnyLayout {
     static var defaultTraits: Self.Traits { get }
     
     /// TODO
-    func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult
-}
-
-
-public protocol AnyLayout {
-    func anyLayout2(in constraint : SizeConstraint, items: [Any]) -> LayoutResult
-}
-
-
-extension Layout {
-    public func anyLayout2(in constraint : SizeConstraint, items: [Any]) -> LayoutResult {
-        self.layout2(in: constraint, items: items as! [LayoutItem<Self>])
-    }
+    func layout(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult
 }
 
 

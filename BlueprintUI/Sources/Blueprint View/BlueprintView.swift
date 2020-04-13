@@ -80,7 +80,7 @@ public final class BlueprintView: UIView {
             return .zero
         }
         
-        let result = element.content.layout2(in: size == .zero ? .unconstrained : .init(size))
+        let result = element.content.layout(in: size == .zero ? .unconstrained : .init(size))
         
         return result.size
     }

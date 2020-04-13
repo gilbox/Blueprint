@@ -106,7 +106,7 @@ public struct Aligned: Element {
             return attributes
         }
         
-        func layout2(in constraint: SizeConstraint, child: MeasurableChild) -> SingleChildLayoutResult {
+        func layout(in constraint: SizeConstraint, child: MeasurableChild) -> SingleChildLayoutResult {
             SingleChildLayoutResult(
                 size: { child.size(in: constraint) },
                 layoutAttributes: { self.layoutAttributes(with: $0) }

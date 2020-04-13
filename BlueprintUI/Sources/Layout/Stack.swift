@@ -122,7 +122,7 @@ public struct StackLayout: Layout {
         self.axis = axis
     }
     
-    public func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
+    public func layout(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
         LayoutResult(
             size: {
                 _measureIn(constraint: constraint, items: items)
@@ -317,7 +317,7 @@ extension StackLayout {
         let constraint = vectorConstraint.constraint(axis: axis)
 
         /// The measured sizes of each item, constrained as if each were the only element in the stack.
-        let basisSizes = items.map { $0.content.measure2(in: constraint).axis(on: axis) }
+        let basisSizes = items.map { $0.content.measure(in: constraint).axis(on: axis) }
 
         func unconstrainedAxisSize() -> CGFloat {
             let totalMeasuredAxis: CGFloat = basisSizes.reduce(0.0, +)
@@ -541,7 +541,7 @@ extension StackLayout {
     /// - Parameters:
     ///   - for: The items to measure.
     ///   - axisConstraints: The axis components of the constraint for each measurement.
-    ///   - crossConstraint: The cross component of the contraint for all measurements.
+    ///   - crossConstraint: The cross component of the constraint for all measurements.
     /// - Returns: The cross measurements as segments.
     private func _crossSegments(
         for items: [LayoutItem<Self>],
@@ -554,7 +554,7 @@ extension StackLayout {
                 axis: .atMost(axisConstraint),
                 cross: crossConstraint)
             let constraint = vector.constraint(axis: axis)
-            let measuredSize = item.content.measure2(in: constraint)
+            let measuredSize = item.content.measure(in: constraint)
 
             return measuredSize.cross(on: axis)
         }
