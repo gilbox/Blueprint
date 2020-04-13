@@ -78,7 +78,7 @@ fileprivate protocol AnyContentStorage {
 
 extension ElementContent {
 
-    public struct ContentStorage<LayoutType: Layout> : Measurable, AnyContentStorage {
+    public struct ContentStorage<LayoutType: Layout> : AnyContentStorage {
 
         /// The layout object that is ultimately responsible for measuring
         /// and layout tasks.

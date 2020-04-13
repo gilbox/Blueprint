@@ -89,12 +89,11 @@ extension CGSize {
             return 0.0
         }
     }
-
 }
 
 extension Image {
 
-    fileprivate struct Measurer: Measurable {
+    fileprivate struct Measurer {
 
         var contentMode: ContentMode
         var imageSize: CGSize?
