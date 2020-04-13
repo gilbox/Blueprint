@@ -1,7 +1,8 @@
 import UIKit
 
+
 /// Conforming types can calculate layout attributes for an array of children.
-public protocol Layout {
+public protocol Layout : AnyLayout {
     
     /// Per-item metadata that is used during the measuring and layout pass.
     associatedtype Traits = ()
@@ -36,6 +37,43 @@ public protocol Layout {
 }
 
 
+public protocol AnyLayout {
+    func anyLayout2(in constraint : SizeConstraint, items: [Any]) -> LayoutResult
+}
+
+
+extension Layout {
+    public func anyLayout2(in constraint : SizeConstraint, items: [Any]) -> LayoutResult {
+        self.layout2(in: constraint, items: items as! [LayoutItem<Self>])
+    }
+}
+
+
+public struct MeasurableLayout {
+    
+    private let layout : AnyLayout
+    private let items : [Any]
+    
+    internal init<LayoutType:Layout>(layout : LayoutType, items : [LayoutItem<LayoutType.Traits>]) {
+        self.layout = layout
+        self.items = items
+    }
+    
+    public func measure2(in constraint : SizeConstraint) -> CGSize {
+        let result = self.layout.anyLayout2(in: constraint, items: self.items)
+        return result.size
+    }
+}
+
+
+extension Layout where Traits == () {
+    
+    public static var defaultTraits: () {
+        return ()
+    }
+}
+
+
 public struct LayoutResult {
     
     public var size : CGSize
@@ -67,13 +105,4 @@ public struct LayoutItem<LayoutType:Layout> {
     public var content: ElementContent
     public var traits: LayoutType.Traits
     public var key: AnyHashable?
-}
-
-
-extension Layout where Traits == () {
-    
-    public static var defaultTraits: () {
-        return ()
-    }
-    
 }

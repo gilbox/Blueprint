@@ -57,7 +57,7 @@ extension ElementContent {
     /// Initializes a new `ElementContent` with no children that delegates to the provided `Measurable`.
     public init(measurable: Measurable) {
         self = ElementContent(
-            layout: MeasurableLayout(measurable: measurable),
+            layout: IntrinsicSizeLayout(measurable: measurable),
             configure: { _ in }
         )
     }
@@ -231,7 +231,7 @@ fileprivate struct PassthroughLayout: SingleChildLayout {
 }
 
 // Used for empty elements with an intrinsic size
-fileprivate struct MeasurableLayout: Layout {
+fileprivate struct IntrinsicSizeLayout: Layout {
 
     var measurable: Measurable
 
