@@ -49,11 +49,20 @@ fileprivate struct OverlayLayout: Layout {
     
     func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
         LayoutResult(
-            size: constraint.maximum,
-            layoutAttributes: Array(
-                repeating: LayoutAttributes(size: constraint.maximum),
-                count: items.count
-            )
+            size: {
+                items.reduce(into: CGSize.zero, { result, item in
+                    let measuredSize = item.content.measure(in: constraint)
+                    
+                    result.width = max(result.width, measuredSize.width)
+                    result.height = max(result.height, measuredSize.height)
+                })
+            },
+            layoutAttributes: {
+                Array(
+                    repeating: LayoutAttributes(size: $0),
+                    count: items.count
+                )
+            }
         )
     }
 }

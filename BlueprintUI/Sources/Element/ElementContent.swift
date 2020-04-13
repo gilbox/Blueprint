@@ -66,14 +66,15 @@ extension ElementContent {
 
     /// Initializes a new `ElementContent` with no children that delegates to the provided measure function.
     public init(measureFunction: @escaping (SizeConstraint) -> CGSize) {
-        struct Measurer: Measurable {
-            var _measure: (SizeConstraint) -> CGSize
-            func measure(in constraint: SizeConstraint) -> CGSize {
-                return _measure(constraint)
-            }
-        }
+        self = ElementContent(measurable: Measurer(measure: measureFunction))
+    }
+    
+    private struct Measurer: Measurable {
+        let measure: (SizeConstraint) -> CGSize
         
-        self = ElementContent(measurable: Measurer(_measure: measureFunction))
+        func measure(in constraint: SizeConstraint) -> CGSize {
+            measure(constraint)
+        }
     }
 
     /// Initializes a new `ElementContent` with no children that uses the provided intrinsic size for measuring.
@@ -108,22 +109,27 @@ extension ElementContent {
         
         /// Adds the given child element.
         public mutating func add(element: Element, traits: LayoutType.Traits = LayoutType.defaultTraits, key: AnyHashable? = nil) {
-            let child = Child(
+            self.add(Child(
                 element: element,
                 content: element.content,
                 traits: traits,
                 key: key
-            )
-            
-            children.append(child)
+            ))
         }
         
-        fileprivate struct Child {
-
-            var element: Element
-            var content: ElementContent
-            var traits: LayoutType.Traits
-            var key: AnyHashable?
+        public mutating func add(_ child : Child) {
+            self.children.append(child)
+        }
+        
+        public mutating func add(_ children : [Child]) {
+            self.children += children
+        }
+        
+        public struct Child {
+            public var element: Element
+            public var content: ElementContent
+            public var traits: LayoutType.Traits
+            public var key: AnyHashable?
         }
         
         public func measure(in constraint: SizeConstraint) -> CGSize {
