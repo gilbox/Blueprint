@@ -48,8 +48,8 @@ public struct GridLayout: Layout {
             },
             layoutAttributes: { size in
                 guard items.count > 0 else { return [] }
-                assert(direction.primaryDimensionSize > 0)
                 
+                precondition(direction.primaryDimensionSize > 0)
                 
                 let itemSize: CGFloat
                 switch direction {
