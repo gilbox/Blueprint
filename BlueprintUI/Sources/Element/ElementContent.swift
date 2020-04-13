@@ -53,37 +53,23 @@ extension ElementContent {
     public init(child: Element) {
         self = ElementContent(child: child, layout: PassthroughLayout())
     }
-
-    /// Initializes a new `ElementContent` with no children that delegates to the provided `Measurable`.
-    public init(measurable: Measurable) {
+    
+    /// Initializes a new `ElementContent` with no children that delegates to the provided closure.
+    public init(measure: @escaping (SizeConstraint) -> CGSize) {
         self = ElementContent(
-            layout: IntrinsicSizeLayout(measurable: measurable),
+            layout: IntrinsicSizeLayout(measure: measure),
             configure: { _ in }
         )
     }
 
-    /// Initializes a new `ElementContent` with no children that delegates to the provided measure function.
-    public init(measureFunction: @escaping (SizeConstraint) -> CGSize) {
-        self = ElementContent(measurable: Measurer(measure: measureFunction))
-    }
-    
-    private struct Measurer: Measurable {
-        let measure: (SizeConstraint) -> CGSize
-        
-        func measure(in constraint: SizeConstraint) -> CGSize {
-            measure(constraint)
-        }
-    }
-
     /// Initializes a new `ElementContent` with no children that uses the provided intrinsic size for measuring.
     public init(intrinsicSize: CGSize) {
-        self = ElementContent(measureFunction: { _ in intrinsicSize })
+        self = ElementContent(measure: { _ in intrinsicSize })
     }
-
 }
 
 
-fileprivate protocol AnyContentStorage : Measurable {
+fileprivate protocol AnyContentStorage {
     var childCount: Int { get }
     func layout2(in constraint : SizeConstraint) -> LayoutResult
     func layoutElementTree(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)]
@@ -226,6 +212,7 @@ fileprivate struct PassthroughLayout: SingleChildLayout {
 // Used for empty elements with an intrinsic size
 fileprivate struct IntrinsicSizeLayout: Layout {
 
+    // TODO: This, or a layout?
     var measure : (SizeConstraint) -> CGSize
     
     public func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {

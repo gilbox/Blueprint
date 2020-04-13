@@ -21,8 +21,12 @@ public struct Image: Element {
     }
 
     public var content: ElementContent {
-        let measurer = Measurer(contentMode: contentMode, imageSize: image?.size)
-        return ElementContent(measurable: measurer)
+        ElementContent {
+            Measurer(
+                contentMode: self.contentMode,
+                imageSize: self.image?.size
+            ).measure(in: $0)
+        }
     }
 
     public func backingViewDescription(bounds: CGRect, subtreeExtent: CGRect?) -> ViewDescription? {
