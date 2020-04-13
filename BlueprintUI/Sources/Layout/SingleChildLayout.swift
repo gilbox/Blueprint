@@ -21,7 +21,7 @@ public protocol SingleChildLayout {
     func layout(size: CGSize, child: Measurable) -> LayoutAttributes
     
     /// TODO
-    func layout2(in constraint : SizeConstraint, child : Measurable) -> SingleChildLayoutResult
+    func layout2(in constraint : SizeConstraint, child : MeasurableLayout) -> SingleChildLayoutResult
 }
 
 

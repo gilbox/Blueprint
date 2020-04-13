@@ -104,10 +104,30 @@ extension Inset {
             return LayoutAttributes(frame: frame)
         }
 
-        func layout2(in constraint: SizeConstraint, child: Measurable) -> SingleChildLayoutResult {
+        func layout2(in constraint: SizeConstraint, child: MeasurableLayout) -> SingleChildLayoutResult {
             SingleChildLayoutResult(
-                size: { self.measure(in: constraint, child: child) },
-                layoutAttributes: { self.layout(size: $0, child: child) }
+                size: {
+                    let constraint = constraint.inset(
+                        width: left + right,
+                        height: top + bottom
+                    )
+
+                    var size = child.measure2(in: constraint)
+
+                    size.width += left + right
+                    size.height += top + bottom
+
+                    return size
+                },                
+                layoutAttributes: {
+                    var frame = CGRect(origin: .zero, size: $0)
+                    frame.origin.x += left
+                    frame.origin.y += top
+                    frame.size.width -= left + right
+                    frame.size.height -= top + bottom
+                    
+                    return LayoutAttributes(frame: frame)
+                }
             )
         }
     }

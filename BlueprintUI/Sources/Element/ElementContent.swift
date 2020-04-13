@@ -222,9 +222,9 @@ fileprivate struct PassthroughLayout: SingleChildLayout {
         return LayoutAttributes(size: size)
     }
     
-    func layout2(in constraint : SizeConstraint, child : Measurable) -> SingleChildLayoutResult {
+    func layout2(in constraint : SizeConstraint, child : MeasurableLayout) -> SingleChildLayoutResult {
         SingleChildLayoutResult(
-            size: { child.measure(in: constraint) },
+            size: { child.measure2(in: constraint) },
             layoutAttributes: { LayoutAttributes(size: $0) }
         )
     }
