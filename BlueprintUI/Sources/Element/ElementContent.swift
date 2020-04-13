@@ -19,12 +19,12 @@ public struct ElementContent : Measurable {
         return storage.childCount
     }
 
-    func performLayout(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)] {
-        return storage.performLayout(attributes: attributes)
+    func layoutElementTree(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)] {
+        return storage.layoutElementTree(attributes: attributes)
     }
     
-    func layout(in size : SizeConstraint) -> LayoutResult {
-        fatalError()
+    func layout2(in constraint : SizeConstraint) -> LayoutResult {
+        self.storage.layout2(in: constraint)
     }
     
     // MARK: Measurable
@@ -86,7 +86,8 @@ extension ElementContent {
 
 fileprivate protocol AnyContentStorage : Measurable {
     var childCount: Int { get }
-    func performLayout(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)]
+    func layout2(in constraint : SizeConstraint) -> LayoutResult
+    func layoutElementTree(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)]
 }
 
 
@@ -134,8 +135,16 @@ extension ElementContent {
         var childCount: Int {
             return children.count
         }
+        
+        func layout2(in constraint : SizeConstraint) -> LayoutResult {
+            let layout = MeasurableLayout(layout: self.layout, items: self.children.map {
+                LayoutItem(element: $0.element, content: $0.content, traits: $0.traits, key: $0.key)
+            })
+            
+            return layout.layout2(in: constraint)
+        }
 
-        func performLayout(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)] {
+        func layoutElementTree(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)] {
 
             let childAttributes = layout.layout(size: attributes.bounds.size, items: layoutItems)
             
@@ -188,8 +197,11 @@ fileprivate struct SingleChildLayoutHost: Layout {
 
     func layout(size: CGSize, items: [(traits: (), content: Measurable)]) -> [LayoutAttributes] {
         precondition(items.count == 1)
+        
+        let item = items[0]
+        
         return [
-            wrapped.layout(size: size, child: items[0].content)
+            wrapped.layout(size: size, child: item.content)
         ]
     }
     
@@ -198,7 +210,9 @@ fileprivate struct SingleChildLayoutHost: Layout {
         
         let item = items[0]
         
-        return item.content.layout(in: constraint)
+        // TODO: Not passing a child here... I think that's OK since we're using it above, but double check.
+        
+        return item.content.layout2(in: constraint)
     }
 }
 

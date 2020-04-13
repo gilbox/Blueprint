@@ -40,7 +40,7 @@ struct LayoutResultNode {
         self.element = element
         self.layoutAttributes = layoutAttributes
         
-        self.children = content.performLayout(attributes: layoutAttributes)
+        self.children = content.layoutElementTree(attributes: layoutAttributes)
         
         let layoutEndTime = DispatchTime.now()
         let layoutDuration = layoutEndTime.uptimeNanoseconds - layoutBeginTime.uptimeNanoseconds
