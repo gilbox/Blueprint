@@ -82,7 +82,7 @@ extension Inset {
         var left: CGFloat
         var right: CGFloat
 
-        func layout2(in constraint: SizeConstraint, child: MeasurableLayout) -> SingleChildLayoutResult {
+        func layout2(in constraint: SizeConstraint, child: MeasurableChild) -> SingleChildLayoutResult {
             SingleChildLayoutResult(
                 size: {
                     let constraint = constraint.inset(
@@ -90,7 +90,7 @@ extension Inset {
                         height: top + bottom
                     )
 
-                    var size = child.measure2(in: constraint)
+                    var size = child.size(in: constraint)
 
                     size.width += left + right
                     size.height += top + bottom

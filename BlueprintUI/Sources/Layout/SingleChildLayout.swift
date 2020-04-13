@@ -4,7 +4,7 @@ import UIKit
 public protocol SingleChildLayout {
     
     /// TODO
-    func layout2(in constraint : SizeConstraint, child : MeasurableLayout) -> SingleChildLayoutResult
+    func layout2(in constraint : SizeConstraint, child : MeasurableChild) -> SingleChildLayoutResult
 }
 
 
@@ -29,5 +29,20 @@ public struct SingleChildLayoutResult {
         
         self.size = size
         self.layoutAttributes = layoutAttributes
+    }
+}
+
+
+/// Please measure me and my son again
+public struct MeasurableChild {
+    
+    var provider : (SizeConstraint) -> CGSize
+    
+    init(_ provider : @escaping (SizeConstraint) -> CGSize) {
+        self.provider = provider
+    }
+    
+    public func size(in constraint : SizeConstraint) -> CGSize {
+        self.provider(constraint)
     }
 }

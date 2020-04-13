@@ -27,27 +27,6 @@ extension Layout {
 }
 
 
-public struct MeasurableLayout {
-    
-    private let layout : AnyLayout
-    private let items : [Any]
-    
-    internal init<LayoutType:Layout>(layout : LayoutType, items : [LayoutItem<LayoutType>]) {
-        self.layout = layout
-        self.items = items
-    }
-    
-    public func layout2(in constraint : SizeConstraint) -> LayoutResult {
-        self.layout.anyLayout2(in: constraint, items: self.items)
-    }
-    
-    public func measure2(in constraint : SizeConstraint) -> CGSize {
-        let result = self.layout2(in: constraint)
-        return result.size
-    }
-}
-
-
 extension Layout where Traits == () {
     
     public static var defaultTraits: () {

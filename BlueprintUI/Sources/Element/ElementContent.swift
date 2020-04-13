@@ -188,10 +188,15 @@ fileprivate struct SingleChildLayoutHost: Layout {
     func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
         precondition(items.count == 1)
         
-        let result = wrapped.layout2(in: constraint, child: MeasurableLayout(layout: self, items: items))
-        
-        // TODO: ???
-        
+        let item = items[0]
+                
+        let result = wrapped.layout2(
+            in: constraint,
+            child: MeasurableChild {
+                item.content.measure2(in: $0)
+            }
+        )
+                
         return LayoutResult(
             size: result.size,
             layoutAttributes: [result.layoutAttributes]
@@ -202,9 +207,9 @@ fileprivate struct SingleChildLayoutHost: Layout {
 // Used for elements with a single child that requires no custom layout
 fileprivate struct PassthroughLayout: SingleChildLayout {
     
-    func layout2(in constraint : SizeConstraint, child : MeasurableLayout) -> SingleChildLayoutResult {
+    func layout2(in constraint : SizeConstraint, child : MeasurableChild) -> SingleChildLayoutResult {
         SingleChildLayoutResult(
-            size: { child.measure2(in: constraint) },
+            size: { child.size(in: constraint) },
             layoutAttributes: { LayoutAttributes(size: $0) }
         )
     }

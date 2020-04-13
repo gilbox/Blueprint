@@ -69,10 +69,10 @@ extension ScrollView {
         var contentSize: ContentSize
         var centersUnderflow: Bool
         
-        func layout2(in constraint: SizeConstraint, child: MeasurableLayout) -> SingleChildLayoutResult {
+        func layout2(in constraint: SizeConstraint, child: MeasurableChild) -> SingleChildLayoutResult {
             SingleChildLayoutResult(
-                size: { self.measure(in: constraint, childSize: { child.measure2(in: $0) })},
-                layoutAttributes: { self.layout(size: $0, childSize: { child.measure2(in: $0) }) }
+                size: { self.measure(in: constraint, childSize: { child.size(in: $0) })},
+                layoutAttributes: { self.layout(size: $0, childSize: { child.size(in: $0) }) }
             )
         }
 
