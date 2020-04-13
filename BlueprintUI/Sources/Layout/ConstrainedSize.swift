@@ -74,7 +74,10 @@ extension ConstrainedSize {
                     result.height = height.applied(to: result.height)
                     return result
                 },
-                layoutAttributes: { LayoutAttributes(size: $0) }
+                layoutAttributes: {
+                    LayoutAttributes(size: $0)
+                    
+                }
             )
         }
     }

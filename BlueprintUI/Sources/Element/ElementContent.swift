@@ -127,11 +127,9 @@ extension ElementContent {
         }
         
         func layout2(in constraint : SizeConstraint) -> LayoutResult {
-            let layout = MeasurableLayout(layout: self.layout, items: self.children.map {
+            self.layout.layout2(in: constraint, items: self.children.map {
                 LayoutItem(element: $0.element, content: $0.content, traits: $0.traits, key: $0.key)
             })
-            
-            return layout.layout2(in: constraint)
         }
 
         func layoutElementTree(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)] {
@@ -190,11 +188,14 @@ fileprivate struct SingleChildLayoutHost: Layout {
     func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
         precondition(items.count == 1)
         
-        let item = items[0]
+        let result = wrapped.layout2(in: constraint, child: MeasurableLayout(layout: self, items: items))
         
-        // TODO: Not passing a child here... I think that's OK since we're using it above, but double check.
+        // TODO: ???
         
-        return item.content.layout2(in: constraint)
+        return LayoutResult(
+            size: result.size,
+            layoutAttributes: [result.layoutAttributes]
+        )
     }
 }
 
