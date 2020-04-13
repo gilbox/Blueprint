@@ -226,13 +226,13 @@ fileprivate struct PassthroughLayout: SingleChildLayout {
 // Used for empty elements with an intrinsic size
 fileprivate struct IntrinsicSizeLayout: Layout {
 
-    var measurable: Measurable
+    var measure : (SizeConstraint) -> CGSize
     
     public func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
         precondition(items.isEmpty)
 
         return LayoutResult(
-            size: measurable.measure(in: constraint),
+            size: measure(constraint),
             layoutAttributes: []
         )
     }
