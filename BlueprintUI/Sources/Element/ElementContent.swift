@@ -202,12 +202,9 @@ fileprivate struct SingleChildLayoutHost: Layout {
     func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
         precondition(items.count == 1)
         
-        let result = wrapped.layout2(in: constraint, child: items[0].content)
+        let item = items[0]
         
-        return LayoutResult(
-            size: result.size,
-            layoutAttributes: [result.layoutAttributes]
-        )
+        return item.content.layout(in: constraint)
     }
 }
 
