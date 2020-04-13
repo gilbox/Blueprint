@@ -104,14 +104,10 @@ extension Inset {
             return LayoutAttributes(frame: frame)
         }
 
-        func layout2(in constraint: SizeConstraint, child: Measurable) -> LayoutResult {
-            let size = self.measure(in: constraint, child: child)
-            
-            return LayoutResult(
-                size: size,
-                layoutAttributes: [
-                    self.layout(size: size, child: child)
-                ]
+        func layout2(in constraint: SizeConstraint, child: Measurable) -> SingleChildLayoutResult {
+            SingleChildLayoutResult(
+                size: { self.measure(in: constraint, child: child) },
+                layoutAttributes: { self.layout(size: $0, child: child) }
             )
         }
     }

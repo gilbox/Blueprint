@@ -77,14 +77,10 @@ extension ConstrainedSize {
             return LayoutAttributes(size: size)
         }
         
-        func layout2(in constraint: SizeConstraint, child: Measurable) -> LayoutResult {
-            let size = self.measure(in: constraint, child: child)
-            
-            return LayoutResult(
-                size: size,
-                layoutAttributes: [
-                    LayoutAttributes(size: size)
-                ]
+        func layout2(in constraint: SizeConstraint, child: Measurable) -> SingleChildLayoutResult {
+            SingleChildLayoutResult(
+                size: { self.measure(in: constraint, child: child) },
+                layoutAttributes: { LayoutAttributes(size: $0) }
             )
         }
     }

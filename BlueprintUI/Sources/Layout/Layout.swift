@@ -37,6 +37,7 @@ public protocol Layout {
 
 
 public struct LayoutResult {
+    
     public var size : CGSize
     public var layoutAttributes : [LayoutAttributes]
     
@@ -44,6 +45,17 @@ public struct LayoutResult {
         size : CGSize,
         layoutAttributes : [LayoutAttributes]
     ) {
+        self.size = size
+        self.layoutAttributes = layoutAttributes
+    }
+    
+    public init(
+        size sizeProvider : () -> CGSize,
+        layoutAttributes layoutAttributesProvider : (CGSize) -> [LayoutAttributes]
+    ) {
+        let size = sizeProvider()
+        let layoutAttributes = layoutAttributesProvider(size)
+        
         self.size = size
         self.layoutAttributes = layoutAttributes
     }

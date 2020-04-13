@@ -21,5 +21,30 @@ public protocol SingleChildLayout {
     func layout(size: CGSize, child: Measurable) -> LayoutAttributes
     
     /// TODO
-    func layout2(in constraint : SizeConstraint, child : Measurable) -> LayoutResult
+    func layout2(in constraint : SizeConstraint, child : Measurable) -> SingleChildLayoutResult
+}
+
+
+public struct SingleChildLayoutResult {
+    public var size : CGSize
+    public var layoutAttributes : LayoutAttributes
+    
+    public init(
+        size : CGSize,
+        layoutAttributes : LayoutAttributes
+    ) {
+        self.size = size
+        self.layoutAttributes = layoutAttributes
+    }
+    
+    public init(
+        size sizeProvider : () -> CGSize,
+        layoutAttributes layoutAttributesProvider : (CGSize) -> LayoutAttributes
+    ) {
+        let size = sizeProvider()
+        let layoutAttributes = layoutAttributesProvider(size)
+        
+        self.size = size
+        self.layoutAttributes = layoutAttributes
+    }
 }

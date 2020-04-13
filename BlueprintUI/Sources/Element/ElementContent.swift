@@ -201,7 +201,13 @@ fileprivate struct SingleChildLayoutHost: Layout {
     
     func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
         precondition(items.count == 1)
-        return wrapped.layout2(in: constraint, child: items[0].content)
+        
+        let result = wrapped.layout2(in: constraint, child: items[0].content)
+        
+        return LayoutResult(
+            size: result.size,
+            layoutAttributes: [result.layoutAttributes]
+        )
     }
 }
 
@@ -216,12 +222,10 @@ fileprivate struct PassthroughLayout: SingleChildLayout {
         return LayoutAttributes(size: size)
     }
     
-    func layout2(in constraint : SizeConstraint, child : Measurable) -> LayoutResult {
-        let size = child.measure(in: constraint)
-        
-        return LayoutResult(
-            size: size,
-            layoutAttributes: [LayoutAttributes(size: size)]
+    func layout2(in constraint : SizeConstraint, child : Measurable) -> SingleChildLayoutResult {
+        SingleChildLayoutResult(
+            size: { child.measure(in: constraint) },
+            layoutAttributes: { LayoutAttributes(size: $0) }
         )
     }
 }
