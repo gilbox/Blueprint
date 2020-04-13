@@ -70,16 +70,8 @@ public struct Aligned: Element {
         
         var verticalAlignment: VerticalAlignment
         var horizontalAlignment: HorizontalAlignment
-
-        func measure(in constraint: SizeConstraint, child: Measurable) -> CGSize {
-            return child.measure(in: constraint)
-        }
-
-        func layout(size: CGSize, child: Measurable) -> LayoutAttributes {
-            self.layout(size: size)
-        }
         
-        private func layout(size : CGSize) -> LayoutAttributes {
+        private func layoutAttributes(with size : CGSize) -> LayoutAttributes {
 
             var attributes = LayoutAttributes(size: size)
 
@@ -117,7 +109,7 @@ public struct Aligned: Element {
         func layout2(in constraint: SizeConstraint, child: MeasurableLayout) -> SingleChildLayoutResult {
             SingleChildLayoutResult(
                 size: { child.measure2(in: constraint) },
-                layoutAttributes: { self.layout(size: $0) }
+                layoutAttributes: { self.layoutAttributes(with: $0) }
             )
         }
     }

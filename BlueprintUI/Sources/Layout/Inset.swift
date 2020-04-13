@@ -82,28 +82,6 @@ extension Inset {
         var left: CGFloat
         var right: CGFloat
 
-        func measure(in constraint: SizeConstraint, child: Measurable) -> CGSize {
-            let insetConstraint = constraint.inset(
-                width: left + right,
-                height: top + bottom)
-
-            var size = child.measure(in: insetConstraint)
-
-            size.width += left + right
-            size.height += top + bottom
-
-            return size
-        }
-
-        func layout(size: CGSize, child: Measurable) -> LayoutAttributes {
-            var frame = CGRect(origin: .zero, size: size)
-            frame.origin.x += left
-            frame.origin.y += top
-            frame.size.width -= left + right
-            frame.size.height -= top + bottom
-            return LayoutAttributes(frame: frame)
-        }
-
         func layout2(in constraint: SizeConstraint, child: MeasurableLayout) -> SingleChildLayoutResult {
             SingleChildLayoutResult(
                 size: {

@@ -1,7 +1,7 @@
 import UIKit
 
 /// Represents the content of an element.
-public struct ElementContent : Measurable {
+public struct ElementContent {
 
     private let storage: AnyContentStorage
 
@@ -16,21 +16,19 @@ public struct ElementContent : Measurable {
     }
 
     public var childCount: Int {
-        return storage.childCount
+        storage.childCount
     }
 
     func layoutElementTree(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)] {
-        return storage.layoutElementTree(attributes: attributes)
+        storage.layoutElementTree(attributes: attributes)
     }
     
     func layout2(in constraint : SizeConstraint) -> LayoutResult {
-        self.storage.layout2(in: constraint)
+        storage.layout2(in: constraint)
     }
     
-    // MARK: Measurable
-    
-    public func measure(in constraint: SizeConstraint) -> CGSize {
-        return storage.measure(in: constraint)
+    func measure2(in constraint : SizeConstraint) -> CGSize {
+        layout2(in: constraint).size
     }
 }
 
@@ -132,8 +130,8 @@ extension ElementContent {
             public var key: AnyHashable?
         }
         
-        public func measure(in constraint: SizeConstraint) -> CGSize {
-            return layout.measure(in: constraint, items: layoutItems)
+        public func measure2(in constraint: SizeConstraint) -> CGSize {
+            return layout2(in: constraint).size
         }
         
         // MARK: AnyContentStorage
@@ -224,14 +222,6 @@ fileprivate struct SingleChildLayoutHost: Layout {
 
 // Used for elements with a single child that requires no custom layout
 fileprivate struct PassthroughLayout: SingleChildLayout {
-
-    func measure(in constraint: SizeConstraint, child: Measurable) -> CGSize {
-        return child.measure(in: constraint)
-    }
-
-    func layout(size: CGSize, child: Measurable) -> LayoutAttributes {
-        return LayoutAttributes(size: size)
-    }
     
     func layout2(in constraint : SizeConstraint, child : MeasurableLayout) -> SingleChildLayoutResult {
         SingleChildLayoutResult(
@@ -245,16 +235,6 @@ fileprivate struct PassthroughLayout: SingleChildLayout {
 fileprivate struct IntrinsicSizeLayout: Layout {
 
     var measurable: Measurable
-
-    func measure(in constraint: SizeConstraint, items: [(traits: (), content: Measurable)]) -> CGSize {
-        precondition(items.isEmpty)
-        return measurable.measure(in: constraint)
-    }
-
-    func layout(size: CGSize, items: [(traits: (), content: Measurable)]) -> [LayoutAttributes] {
-        precondition(items.isEmpty)
-        return []
-    }
     
     public func layout2(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
         precondition(items.isEmpty)
