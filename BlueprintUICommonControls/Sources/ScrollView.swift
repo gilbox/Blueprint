@@ -29,13 +29,20 @@ public struct ScrollView: Element {
     public var keyboardDismissMode: UIScrollView.KeyboardDismissMode = .none
     public var keyboardAdjustmentMode : KeyboardAdjustmentMode = .adjustsWhenVisible
 
-
-    public init(wrapping element: Element) {
+    public init(wrapping element: Element, configure : (inout ScrollView) -> () = { _ in }) {
         self.wrappedElement = element
+        configure(&self)
     }
 
     public var content: ElementContent {
-        return ElementContent(child: wrappedElement, layout: layout)
+        return ElementContent(
+            child: wrappedElement,
+            layout: Layout(
+                contentInset: contentInset,
+                contentSize: contentSize,
+                centersUnderflow: centersUnderflow
+            )
+        )
     }
 
     public func backingViewDescription(bounds: CGRect, subtreeExtent: CGRect?) -> ViewDescription? {
@@ -50,14 +57,6 @@ public struct ScrollView: Element {
                 $0.apply(scrollView: self, contentFrame: subtreeExtent ?? .zero)
             }
         }
-    }
-
-    private var layout: Layout {
-        return Layout(
-            contentInset: contentInset,
-            contentSize: contentSize,
-            centersUnderflow: centersUnderflow
-        )
     }
 }
 
@@ -87,13 +86,15 @@ extension ScrollView {
             case .fittingHeight:
                 return childSize(SizeConstraint(
                         width: constraint.width,
-                        height: .unconstrained)
+                        height: .unconstrained
+                    )
                 )
 
             case .fittingWidth:
                 return childSize(SizeConstraint(
                         width: .unconstrained,
-                        height: constraint.height)
+                        height: constraint.height
+                    )
                 )
             }
         }
@@ -101,7 +102,8 @@ extension ScrollView {
         private func measure(in constraint: SizeConstraint, childSize : (SizeConstraint) -> CGSize) -> CGSize {
             let adjustedConstraint = constraint.inset(
                 width: contentInset.left + contentInset.right,
-                height: contentInset.top + contentInset.bottom)
+                height: contentInset.top + contentInset.bottom
+            )
 
             var result = self.fittedSize(in: adjustedConstraint, childSize: childSize)
 
@@ -137,6 +139,7 @@ extension ScrollView {
                     contentAttributes.center.y = size.height / 2.0
                 }
             }
+            
             return contentAttributes
         }
     }

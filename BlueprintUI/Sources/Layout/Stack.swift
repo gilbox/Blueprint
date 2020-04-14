@@ -145,7 +145,7 @@ extension StackLayout {
     /// Determines the on-axis layout when there is extra free space available.
     public enum UnderflowDistribution {
 
-        /// Additional space will be evenly devided into the spacing between items.
+        /// Additional space will be evenly divided into the spacing between items.
         case spaceEvenly
 
         /// Additional space will be divided proportionally by the measured size of each child.
@@ -259,9 +259,10 @@ extension StackLayout {
         let frames = _frames(for: items, in: vectorConstraint)
 
         let vector = frames.reduce(Vector.zero) { (vector, frame) -> Vector in
-            return Vector(
+            Vector(
                 axis: max(vector.axis, frame.maxAxis),
-                cross: max(vector.cross, frame.maxCross))
+                cross: max(vector.cross, frame.maxCross)
+            )
         }
 
         return vector.size(axis: axis)
@@ -317,7 +318,7 @@ extension StackLayout {
         let constraint = vectorConstraint.constraint(axis: axis)
 
         /// The measured sizes of each item, constrained as if each were the only element in the stack.
-        let basisSizes = items.map { $0.content.measure(in: constraint).axis(on: axis) }
+        let basisSizes = items.map { $0.content.size(in: constraint).axis(on: axis) }
 
         func unconstrainedAxisSize() -> CGFloat {
             let totalMeasuredAxis: CGFloat = basisSizes.reduce(0.0, +)
@@ -554,7 +555,7 @@ extension StackLayout {
                 axis: .atMost(axisConstraint),
                 cross: crossConstraint)
             let constraint = vector.constraint(axis: axis)
-            let measuredSize = item.content.measure(in: constraint)
+            let measuredSize = item.content.size(in: constraint)
 
             return measuredSize.cross(on: axis)
         }

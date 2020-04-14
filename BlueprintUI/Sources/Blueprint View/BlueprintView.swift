@@ -80,9 +80,7 @@ public final class BlueprintView: UIView {
             return .zero
         }
         
-        let result = element.content.layout(in: size == .zero ? .unconstrained : .init(size))
-        
-        return result.size
+        return element.content.size(in: size == .zero ? .unconstrained : .init(size))
     }
     
     override public func layoutSubviews() {

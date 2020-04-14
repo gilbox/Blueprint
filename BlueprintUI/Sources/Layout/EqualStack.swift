@@ -68,7 +68,7 @@ extension EqualStack {
                         
             LayoutResult(
                 size: {
-                    let itemSizes = items.map { $0.content.measure(in: constraint) }
+                    let itemSizes = items.map { $0.content.size(in: constraint) }
 
                     let maximumItemWidth = itemSizes.map { $0.width }.max() ?? 0
                     let maximumItemHeight = itemSizes.map { $0.height }.max() ?? 0
@@ -78,11 +78,13 @@ extension EqualStack {
                     case .horizontal:
                         totalSize = CGSize(
                             width: maximumItemWidth * CGFloat(items.count) + spacing * CGFloat(items.count - 1),
-                            height: maximumItemHeight)
+                            height: maximumItemHeight
+                        )
                     case .vertical:
                         totalSize = CGSize(
                             width: maximumItemWidth,
-                            height: maximumItemHeight * CGFloat(items.count) + spacing * CGFloat(items.count - 1))
+                            height: maximumItemHeight * CGFloat(items.count) + spacing * CGFloat(items.count - 1)
+                        )
                     }
 
                     return totalSize
@@ -95,11 +97,13 @@ extension EqualStack {
                     case .horizontal:
                         itemSize = CGSize(
                             width: (size.width - (spacing * CGFloat(items.count - 1))) / CGFloat(items.count),
-                            height: size.height)
+                            height: size.height
+                        )
                     case .vertical:
                         itemSize = CGSize(
                             width: size.width,
-                            height: (size.height - (spacing * CGFloat(items.count - 1))) / CGFloat(items.count))
+                            height: (size.height - (spacing * CGFloat(items.count - 1))) / CGFloat(items.count)
+                        )
                     }
 
                     var result: [LayoutAttributes] = []
@@ -122,5 +126,4 @@ extension EqualStack {
             )
         }
     }
-
 }

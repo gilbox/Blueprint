@@ -36,7 +36,7 @@ public struct SingleChildLayoutResult {
 /// Please measure me and my son again
 public struct MeasurableChild {
     
-    var provider : (SizeConstraint) -> CGSize
+    private var provider : (SizeConstraint) -> CGSize
     
     init(_ provider : @escaping (SizeConstraint) -> CGSize) {
         self.provider = provider

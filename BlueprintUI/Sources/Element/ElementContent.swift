@@ -27,7 +27,7 @@ public struct ElementContent {
         storage.layout(in: constraint)
     }
     
-    func measure(in constraint : SizeConstraint) -> CGSize {
+    func size(in constraint : SizeConstraint) -> CGSize {
         layout(in: constraint).size
     }
 }
@@ -167,11 +167,6 @@ extension ElementContent {
             }
         }
     }
-    
-    public struct ChildLayoutResult {
-        var identifier : ElementIdentifier
-        var node : LayoutResultNode
-    }
 }
 
 
@@ -193,7 +188,7 @@ fileprivate struct SingleChildLayoutHost: Layout {
         let result = wrapped.layout(
             in: constraint,
             child: MeasurableChild {
-                item.content.measure(in: $0)
+                item.content.size(in: $0)
             }
         )
                 

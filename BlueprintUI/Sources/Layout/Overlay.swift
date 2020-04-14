@@ -37,7 +37,7 @@ fileprivate struct OverlayLayout: Layout {
         LayoutResult(
             size: {
                 items.reduce(into: CGSize.zero, { result, item in
-                    let measuredSize = item.content.measure(in: constraint)
+                    let measuredSize = item.content.size(in: constraint)
                     
                     result.width = max(result.width, measuredSize.width)
                     result.height = max(result.height, measuredSize.height)
