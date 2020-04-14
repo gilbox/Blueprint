@@ -126,17 +126,19 @@ fileprivate struct FeedItem: ProxyElement {
                 wrapping: Box(
                     backgroundColor: .lightGray,
                     cornerStyle: .rounded(radius: 32.0),
-                    wrapping: nil))
+                    wrapping: nil)
+            )
 
             row.add(
                 growPriority: 0.0,
                 shrinkPriority: 0.0,
-                child: avatar)
+                child: avatar
+            )
 
-            row.add(
-                growPriority: 1.0,
-                shrinkPriority: 1.0,
-                child: FeedItemBody(post: post))
+//            row.add(
+//                growPriority: 1.0,
+//                shrinkPriority: 1.0,
+//                child: FeedItemBody(post: post))
         }
 
         let box = Box(

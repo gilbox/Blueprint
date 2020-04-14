@@ -70,8 +70,48 @@ extension ScrollView {
         
         func layout(in constraint: SizeConstraint, child: MeasurableChild) -> SingleChildLayoutResult {
             SingleChildLayoutResult(
-                size: { self.measure(in: constraint, childSize: { child.size(in: $0) })},
-                layoutAttributes: { self.layout(size: $0, childSize: { child.size(in: $0) }) }
+                size: {
+                    let adjustedConstraint = constraint.inset(
+                        width: contentInset.left + contentInset.right,
+                        height: contentInset.top + contentInset.bottom
+                    )
+
+                    var result = self.fittedSize(in: adjustedConstraint, childSize: { child.size(in: $0) })
+
+                    result.width += contentInset.left + contentInset.right
+                    result.height += contentInset.top + contentInset.bottom
+
+                    result.width = min(result.width, constraint.width.maximum)
+                    result.height = min(result.height, constraint.height.maximum)
+
+                    return result
+                },
+                layoutAttributes: { size in
+                    var insetSize = size
+                    insetSize.width -= contentInset.left + contentInset.right
+                    insetSize.height -= contentInset.top + contentInset.bottom
+
+                    var itemSize = fittedSize(in: SizeConstraint(insetSize), childSize: { child.size(in: $0) })
+                    if self.contentSize == .fittingHeight {
+                        itemSize.width = insetSize.width
+                    } else if self.contentSize == .fittingWidth {
+                        itemSize.height = insetSize.height
+                    }
+
+                    var contentAttributes = LayoutAttributes(frame: CGRect(origin: .zero, size: itemSize))
+
+                    if centersUnderflow {
+                        if contentAttributes.bounds.width < size.width {
+                            contentAttributes.center.x = size.width / 2.0
+                        }
+
+                        if contentAttributes.bounds.height < size.height {
+                            contentAttributes.center.y = size.height / 2.0
+                        }
+                    }
+                    
+                    return contentAttributes
+                }
             )
         }
 
@@ -97,50 +137,6 @@ extension ScrollView {
                     )
                 )
             }
-        }
-        
-        private func measure(in constraint: SizeConstraint, childSize : (SizeConstraint) -> CGSize) -> CGSize {
-            let adjustedConstraint = constraint.inset(
-                width: contentInset.left + contentInset.right,
-                height: contentInset.top + contentInset.bottom
-            )
-
-            var result = self.fittedSize(in: adjustedConstraint, childSize: childSize)
-
-            result.width += contentInset.left + contentInset.right
-            result.height += contentInset.top + contentInset.bottom
-
-            result.width = min(result.width, constraint.width.maximum)
-            result.height = min(result.height, constraint.height.maximum)
-
-            return result
-        }
-
-        private func layout(size : CGSize, childSize : (SizeConstraint) -> CGSize) -> LayoutAttributes {
-            var insetSize = size
-            insetSize.width -= contentInset.left + contentInset.right
-            insetSize.height -= contentInset.top + contentInset.bottom
-
-            var itemSize = fittedSize(in: SizeConstraint(insetSize), childSize: childSize)
-            if self.contentSize == .fittingHeight {
-                itemSize.width = insetSize.width
-            } else if self.contentSize == .fittingWidth {
-                itemSize.height = insetSize.height
-            }
-
-            var contentAttributes = LayoutAttributes(frame: CGRect(origin: .zero, size: itemSize))
-
-            if centersUnderflow {
-                if contentAttributes.bounds.width < size.width {
-                    contentAttributes.center.x = size.width / 2.0
-                }
-
-                if contentAttributes.bounds.height < size.height {
-                    contentAttributes.center.y = size.height / 2.0
-                }
-            }
-            
-            return contentAttributes
         }
     }
 

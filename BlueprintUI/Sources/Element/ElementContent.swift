@@ -18,17 +18,17 @@ public struct ElementContent {
     public var childCount: Int {
         storage.childCount
     }
-
-    func layoutElementTree(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)] {
-        storage.layoutElementTree(attributes: attributes)
-    }
     
-    func layout(in constraint : SizeConstraint) -> LayoutResult {
+    public func layout(in constraint : SizeConstraint) -> LayoutResult {
         storage.layout(in: constraint)
     }
     
-    func size(in constraint : SizeConstraint) -> CGSize {
+    public func size(in constraint : SizeConstraint) -> CGSize {
         layout(in: constraint).size
+    }
+
+    func layoutElementTree(attributes: LayoutAttributes) -> [(identifier: ElementIdentifier, node: LayoutResultNode)] {
+        storage.layoutElementTree(attributes: attributes)
     }
 }
 
