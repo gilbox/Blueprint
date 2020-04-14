@@ -21,11 +21,12 @@ public struct SingleChildLayoutResult {
     }
     
     public init(
-        size sizeProvider : () -> CGSize,
+        with constraint : SizeConstraint,
+        size sizeProvider : (SizeConstraint) -> CGSize,
         layoutAttributes layoutAttributesProvider : (CGSize) -> LayoutAttributes
     ) {
-        let size = sizeProvider()
-        let layoutAttributes = layoutAttributesProvider(size)
+        let size = sizeProvider(constraint)
+        let layoutAttributes = layoutAttributesProvider(constraint.maximum)
         
         self.size = size
         self.layoutAttributes = layoutAttributes

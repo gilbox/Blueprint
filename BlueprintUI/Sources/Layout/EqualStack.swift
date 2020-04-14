@@ -67,7 +67,8 @@ extension EqualStack {
         public func layout(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
                         
             LayoutResult(
-                size: {
+                with: constraint,
+                size: { constraint in
                     let itemSizes = items.map { $0.content.size(in: constraint) }
 
                     let maximumItemWidth = itemSizes.map { $0.width }.max() ?? 0

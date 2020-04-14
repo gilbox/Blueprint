@@ -26,7 +26,8 @@ public struct GridLayout: Layout {
     
     public func layout(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
         LayoutResult(
-            size: {
+            with: constraint,
+            size: { constraint in
                 let primarySize = direction.primaryDimensionSize
                 let secondarySize = Int(ceil(Double(items.count) / Double(primarySize)))
                 

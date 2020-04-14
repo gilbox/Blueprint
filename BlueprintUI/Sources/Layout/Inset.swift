@@ -84,7 +84,8 @@ extension Inset {
 
         func layout(in constraint: SizeConstraint, child: MeasurableChild) -> SingleChildLayoutResult {
             SingleChildLayoutResult(
-                size: {
+                with: constraint,
+                size: { constraint in
                     let insetConstraint = constraint.inset(
                         width: left + right,
                         height: top + bottom

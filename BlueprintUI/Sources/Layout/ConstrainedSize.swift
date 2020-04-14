@@ -65,8 +65,9 @@ extension ConstrainedSize {
         
         func layout(in constraint: SizeConstraint, child: MeasurableChild) -> SingleChildLayoutResult {
             SingleChildLayoutResult(
+                with: constraint,
                 size: {
-                    var result = child.size(in: constraint)
+                    var result = child.size(in: $0)
                     result.width = width.applied(to: result.width)
                     result.height = height.applied(to: result.height)
                     return result

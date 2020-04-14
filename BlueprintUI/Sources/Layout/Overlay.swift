@@ -35,7 +35,8 @@ fileprivate struct OverlayLayout: Layout {
     
     func layout(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
         LayoutResult(
-            size: {
+            with: constraint,
+            size: { constraint in
                 items.reduce(into: CGSize.zero, { result, item in
                     let measuredSize = item.content.size(in: constraint)
                     

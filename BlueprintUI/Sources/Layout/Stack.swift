@@ -124,7 +124,8 @@ public struct StackLayout: Layout {
     
     public func layout(in constraint : SizeConstraint, items: [LayoutItem<Self>]) -> LayoutResult {
         LayoutResult(
-            size: {
+            with: constraint,
+            size: { constraint in
                 _measureIn(constraint: constraint, items: items)
             },
             layoutAttributes: {

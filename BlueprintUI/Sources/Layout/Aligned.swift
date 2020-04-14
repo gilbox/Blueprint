@@ -108,7 +108,8 @@ public struct Aligned: Element {
         
         func layout(in constraint: SizeConstraint, child: MeasurableChild) -> SingleChildLayoutResult {
             SingleChildLayoutResult(
-                size: { child.size(in: constraint) },
+                with: constraint,
+                size: { child.size(in: $0) },
                 layoutAttributes: { self.layoutAttributes(with: $0) }
             )
         }
